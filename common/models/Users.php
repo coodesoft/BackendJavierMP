@@ -155,29 +155,6 @@ class Users extends \yii\db\ActiveRecord
 
     public function getOrganization(){
       $salida = [];
-      $m = Usersinorganization::findOne(['UserId'=>$this->id]);
-
-      if (count($m)>0){
-        $os = OrganizationSection::findOne(['OrganizationId'=>$m->OrganizationId]);
-      //  die(var_dump($os));
-      //  foreach ($os as $v) {
-          $r = [];
-          $r['MinimunAge']          = $os->MinAge;
-          $r['MaximumAge']          = $os->MaxAge;
-          $r['urlProductAdm']       = $os->urlProductAdm;
-          $r['MaxInsuredAmount']    = $os->MaxInsuredAmount;
-          $r['MaxBrokerFee']        = $os->MaxBrokerFee;
-          $r['AgentEnrollmentCode'] = $os->AgentEnrollmentCode;
-          $r['AgentFee']            = $os->AgentFee;
-          $r['section']             = $os->section->Name;
-
-          $salida['sections'][$os->section->Code] = $r;
-        //}
-
-        $salida['type']            = $m->organization->Type;
-        $salida['enrollment_code'] = $m->organization->EnrollmentCode;
-      }
-
       return $salida;
     }
 

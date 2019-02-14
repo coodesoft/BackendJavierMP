@@ -71,7 +71,6 @@ class SessionController extends BaseController
       $this->salida['result']['token']          = 'Bearer '.$userM->token;
       $this->salida['result']['personal_data']  = $userM->getPersonalData();
       $this->salida['result']['UserTypeCode']   = $userM->UserTypeCode;
-      $this->salida['result']['organization']   = $userM->getOrganization();
       $this->salida['result']['functions']      = $userM->getFunctions();
       $this->salida['result']['documents']      = $userM->getDocumentsAuthorized();
 
