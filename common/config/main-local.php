@@ -3,9 +3,9 @@ return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=ebrokerAuth',
-            'username' => 'root',
-            'password' => 'LuchO',
+            'dsn' => 'mysql:host=localhost;dbname=GMercadoPago',
+            'username' => 'GMercadoPago',
+            'password' => 'G335_%TARC00P***eme2P_',
             'charset' => 'utf8',
         ],
         'mailer' => [

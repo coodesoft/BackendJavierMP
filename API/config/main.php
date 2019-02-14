@@ -55,8 +55,8 @@ return [
           'transport' => [
               'class'      => 'Swift_SmtpTransport',
               'host'       => 'smtp.gmail.com',
-              'username'   => 'luciano.n.vega@gmail.com',
-              'password'   => 'asfasfwegvs',
+              'username'   => 'test.coode@gmail.com',
+              'password'   => 'enLASraclas',
               'port'       => '587',
               'encryption' => 'tls',
               'streamOptions' => [
