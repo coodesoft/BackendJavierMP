@@ -71,11 +71,12 @@ class Users extends \yii\db\ActiveRecord
     // DOCUMENTOS ACCESIBLES
     public function getDocumentsAuthorized(){
       $documents = (new \yii\db\Query())
-                  ->select('D.*')->distinct()->from('DocumentTypes D')
+                  ->select('D.*, OT.cod as ObjectTypeCode')->distinct()->from('DocumentTypes D')
+                  ->innerJoin('ObjectType OT', 'D.ObjectTypeId=OT.id')
                   ->innerJoin('DocumentsPerProfile DP', 'D.id=DP.IdDocument')
                   ->innerJoin('Profiles P', 'DP.IdProfile=P.id')
-                  ->innerJoin('Users U', 'P.id=U.profile_code')
-                  ->where(['U.id' => $this->id])
+                  ->innerJoin('UsersInProfile UP', 'P.id=UP.idProfile')
+                  ->where(['UP.idUser' => $this->id])
                   ->all();
       return $documents;
     }

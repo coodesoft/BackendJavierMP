@@ -29,7 +29,7 @@ class DocumentsController extends BaseController
       for( $c=0; $c < count($this->input['data']->DocumentsAvailable ); $c++){
         if ($this->input['data']->DocumentsAvailable[$c]->v){
           $url      = 'http://190.2.42.25:8060/Services/api/AP/ImprimirDocumento?';
-          $params   = 'seccion=12'.'&Poliza='.$this->input['data']->IDPoliza.'&tipo='.$this->input['data']->DocumentsAvailable[$c]->IDTipo;
+          $params   = 'seccion=12'.'&Poliza='.$this->input['data']->IDPoliza.'&tipo='.$this->input['data']->DocumentsAvailable[$c]->IDType;
           $pe = curl_init();
           curl_setopt($pe, CURLOPT_URL, $url.$params);
           curl_setopt($pe, CURLOPT_CUSTOMREQUEST, "GET");
@@ -37,7 +37,7 @@ class DocumentsController extends BaseController
           curl_setopt($pe, CURLOPT_HTTPHEADER, ['Content-Type: content-type: multipart/form-data; boundary=---011000010111000001101001','Authorization: Basic Y3J1enN1aXphOmNydXpzdWl6YQ==']);
           $response = json_decode(curl_exec($pe));
           curl_close($pe);
-          $documents[] = ['Nombre' => $response->Nombre, 'Contenido' => $response->Contenido];
+          $documents[] = ['Nombre' => $response->Nombre, 'Contenido' => $response->Contenido, 'DocumentAvailabelIndex'=>$c];
         }
       }
 
@@ -49,7 +49,7 @@ class DocumentsController extends BaseController
         ->setTo($this->input['data']->EMail)
         ->setSubject('[eBroker] Envío de documentos - póliza n°'.$this->input['data']->IDPoliza );
       for ($c=0; $c<count($documents); $c++){
-        $email->attachContent(base64_decode($documents[$c]['Contenido']), ['fileName' => $documents[$c]['Nombre'], 'contentType' => 'application/pdf']);
+        $email->attachContent(base64_decode($documents[$c]['Contenido']), ['fileName' => $this->input['data']->DocumentsAvailable[$documents[$c]['DocumentAvailabelIndex']]->t.'-'.$documents[$c]['Nombre'], 'contentType' => 'application/pdf']);
       }
       $email->send();
 
