@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 14-02-2019 a las 19:03:40
+-- Tiempo de generación: 23-02-2019 a las 22:39:06
 -- Versión del servidor: 10.1.38-MariaDB-0ubuntu0.18.04.1
 -- Versión de PHP: 7.2.15-0ubuntu0.18.04.1
 
@@ -86,7 +86,11 @@ CREATE TABLE `Functions` (
 --
 
 INSERT INTO `Functions` (`id`, `Code`, `Name`, `Description`, `Created`, `Updated`) VALUES
-(6, 'MiPer', 'Edicion de Mi Perfil', 'Edicion del Perfil Personal del Usuario', '2018-04-17 14:41:04', NULL);
+(6, 'MiPer', 'Edicion de Mi Perfil', 'Edicion del Perfil Personal del Usuario', '2018-04-17 14:41:04', NULL),
+(14, 'NPago', 'Nuevo Pago', 'Permite la creación de nuevas preferencias de pago a ser procesadas en el momento', '2019-02-16 00:00:00', '2019-02-16 00:00:00'),
+(16, 'NUser', 'Nuevo Usuario', 'Permite agregar un nuevo usuario', '2019-02-16 00:00:00', '2019-02-16 00:00:00'),
+(17, 'DUser', 'Borrar usuario', 'Permite la eliminación de un usuario del sistema', '2019-02-16 00:00:00', '2019-02-16 00:00:00'),
+(18, 'EUser', 'Editar usuario', 'Permite la edición de todos los campos relacionados a los usuarios del sistema', '2019-02-16 00:00:00', '2019-02-16 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -105,7 +109,11 @@ CREATE TABLE `FunctionsInRole` (
 --
 
 INSERT INTO `FunctionsInRole` (`id`, `RoleId`, `FunctionId`) VALUES
-(45, 1, 6);
+(45, 1, 6),
+(51, 9, 17),
+(52, 9, 18),
+(53, 9, 16),
+(54, 10, 14);
 
 -- --------------------------------------------------------
 
@@ -192,6 +200,25 @@ CREATE TABLE `OrganizationSection` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `Pago`
+--
+
+CREATE TABLE `Pago` (
+  `id` int(11) NOT NULL,
+  `id_creator` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `doc_type` varchar(50) NOT NULL,
+  `doc_number` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `preference_id` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `Profiles`
 --
 
@@ -227,7 +254,9 @@ CREATE TABLE `Roles` (
 --
 
 INSERT INTO `Roles` (`id`, `code`, `Name`, `Description`, `Created`, `Updated`) VALUES
-(1, '0001', 'All users', 'Rol definido para todos los usuarios', '2018-03-19 18:02:01', NULL);
+(1, '0001', 'All users', 'Rol definido para todos los usuarios', '2018-03-19 18:02:01', NULL),
+(9, '0002', 'Admin Usuarios', 'Permite el acceso a las funciones de administración de usuarios', '2019-02-16 00:00:00', '2019-02-16 00:00:00'),
+(10, '0003', 'Cajero', 'Permite la creación de nuevos pagos para ser procesados en el momento', '2019-02-16 00:00:00', '2019-02-16 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -273,7 +302,7 @@ CREATE TABLE `Users` (
 --
 
 INSERT INTO `Users` (`id`, `FirstName`, `LastName`, `email`, `password`, `salt`, `created`, `updated`, `created_by`, `disabled_on`, `reset_token`, `reset_date`, `token`, `token_datetime`, `UserTypeCode`) VALUES
-(7, 'Usuario', 'Administrador', 'test.coode@gmail.com', '$2y$10$Y8U0gAWbwuAqLYDLI3X69.PiSMIouzgRkTbnuZwvG.P/hnhHHgEb6', '', '2018-03-19 17:28:02', '2018-03-19 17:28:02', 6, NULL, '$2y$10$QqxkkEYNJg4IAnmVkyWP4O1SDzCZ2gIi7LNYnGs4DSUlxvRBJZqGW', '2019-02-06 10:46:07', '$2y$10$HnZWUUzHOAVJAqm/LZwxV.zZdMyfg1nOYZHPNmypL5MDZaekyW5wW', '2019-02-14 18:10:20', 'A');
+(7, 'Usuario', 'Administrador', 'test.coode@gmail.com', '$2y$10$Y8U0gAWbwuAqLYDLI3X69.PiSMIouzgRkTbnuZwvG.P/hnhHHgEb6', '', '2018-03-19 17:28:02', '2018-03-19 17:28:02', 6, NULL, '$2y$10$QqxkkEYNJg4IAnmVkyWP4O1SDzCZ2gIi7LNYnGs4DSUlxvRBJZqGW', '2019-02-06 10:46:07', '$2y$10$qciXBqk6GziVkQqa3wn4muRbsFHcJOvon1IhZKrw1rG9IALmWHQb.', '2019-02-23 22:29:07', 'A');
 
 -- --------------------------------------------------------
 
@@ -335,7 +364,9 @@ CREATE TABLE `UsersInRole` (
 --
 
 INSERT INTO `UsersInRole` (`id`, `RoleId`, `UserId`) VALUES
-(30, 1, 7);
+(30, 1, 7),
+(104, 9, 7),
+(105, 10, 7);
 
 -- --------------------------------------------------------
 
@@ -429,6 +460,12 @@ ALTER TABLE `OrganizationSection`
   ADD KEY `OrganizationSection_FK02` (`SectionId`);
 
 --
+-- Indices de la tabla `Pago`
+--
+ALTER TABLE `Pago`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `Profiles`
 --
 ALTER TABLE `Profiles`
@@ -518,13 +555,13 @@ ALTER TABLE `DocumentTypes`
 -- AUTO_INCREMENT de la tabla `Functions`
 --
 ALTER TABLE `Functions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `FunctionsInRole`
 --
 ALTER TABLE `FunctionsInRole`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `Groups`
@@ -557,6 +594,12 @@ ALTER TABLE `OrganizationSection`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT de la tabla `Pago`
+--
+ALTER TABLE `Pago`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `Profiles`
 --
 ALTER TABLE `Profiles`
@@ -566,7 +609,7 @@ ALTER TABLE `Profiles`
 -- AUTO_INCREMENT de la tabla `Roles`
 --
 ALTER TABLE `Roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `Sections`
@@ -602,13 +645,13 @@ ALTER TABLE `UsersInProfile`
 -- AUTO_INCREMENT de la tabla `UsersInRole`
 --
 ALTER TABLE `UsersInRole`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT de la tabla `UsersTokenLog`
 --
 ALTER TABLE `UsersTokenLog`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=398;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=514;
 
 --
 -- Restricciones para tablas volcadas
