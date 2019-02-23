@@ -9,54 +9,57 @@ use backend\controllers\BaseController;
 
 class UserController extends BaseController
 {
+  public funtion actionCrear()
+  {
+    $id = 'crear-usuario';
+    $this->getInputData($id);
 
-    /**
-     * @inheritdoc
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-        ];
-    }
+    //validamos el token
+    if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
+    $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
+    if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
 
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'create' => ['post'],
-                ],
-            ],
-        ];
-    }
 
-    public function actionNew()
-    {
-      \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-      $salida = ['error' => '', 'result' => ['success' => false]];
 
-      $post = file_get_contents("php://input");
-      $data = json_decode($post);
+    $this->salida['error'] = '';
+    $this->salida['result']['success'] = true;
 
-      if($data == NULL){
-        $salida['error'] = 'invalid input data';
-        return $this->JSONOut($salida);
-      }
+    return $this->successResult($id);
+  }
 
-      $userM = new Users;
-      $userM->new($data);
+  public funtion actionEditar()
+  {
+    $id = 'editar-usuario';
+    $this->getInputData($id);
 
-      if($userM->errors == ''){
-        $salida['result']['success'] = true;
-      } else {
-        $salida['error'] = $userM->errors;
-      }
+    //validamos el token
+    if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
+    $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
+    if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
 
-      return $this->JSONOut($salida);
-    }
 
+
+    $this->salida['error'] = '';
+    $this->salida['result']['success'] = true;
+
+    return $this->successResult($id);
+  }
+
+  public funtion actionBorrar()
+  {
+    $id = 'borrar-usuario';
+    $this->getInputData($id);
+
+    //validamos el token
+    if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
+    $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
+    if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
+
+
+
+    $this->salida['error'] = '';
+    $this->salida['result']['success'] = true;
+
+    return $this->successResult($id);
+  }
 }
