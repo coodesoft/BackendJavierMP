@@ -9,7 +9,7 @@ use backend\controllers\BaseController;
 
 class UserController extends BaseController
 {
-  public funtion actionCrear()
+  public function actionCreate()
   {
     $id = 'crear-usuario';
     $this->getInputData($id);
@@ -27,7 +27,7 @@ class UserController extends BaseController
     return $this->successResult($id);
   }
 
-  public funtion actionEditar()
+  public function actionEdit()
   {
     $id = 'editar-usuario';
     $this->getInputData($id);
@@ -45,7 +45,7 @@ class UserController extends BaseController
     return $this->successResult($id);
   }
 
-  public funtion actionBorrar()
+  public function actionDelete()
   {
     $id = 'borrar-usuario';
     $this->getInputData($id);

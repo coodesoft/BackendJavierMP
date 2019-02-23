@@ -26,7 +26,7 @@ class PagoController extends BaseController
       return $this->successResult($id);
     }
 
-    public funtion actionProcesar()
+    public function actionProcesar()
     {
       $id = 'procesar-pagos';
       $this->getInputData($id);
@@ -35,7 +35,6 @@ class PagoController extends BaseController
       if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
       $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
       if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
-
 
 
       $this->salida['error'] = '';
