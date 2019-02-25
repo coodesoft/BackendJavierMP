@@ -7,6 +7,7 @@ use yii\filters\VerbFilter;
 use backend\controllers\BaseController;
 use common\models\Pago;
 use common\models\Users;
+use common\models\MercadoPagoModel;
 
 class PagoController extends BaseController
 {
@@ -32,6 +33,7 @@ class PagoController extends BaseController
 
       //caso contrario proseguimos
       $this->salida['error'] = '';
+      $this->salida['result']['id_pago'] = $pago->id;
       $this->salida['result']['success'] = true;
 
       return $this->successResult($id);
@@ -46,6 +48,23 @@ class PagoController extends BaseController
       if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
       $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
       if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
+
+      $MP = new MercadoPagoModel();
+      $MP->setMP();
+
+      $payment = new \MercadoPago\Payment();
+
+      $payment->transaction_amount = $this->input['data']->monto;
+      $payment->token              = $this->input['data']->token;
+      $payment->description        = $this->input['data']->descripcion;
+      $payment->installments       = 1;
+      $payment->payment_method_id  = "visa";
+      $payment->payer = [
+        "email" => $this->input['data']->email
+      ];
+      $payment->save();
+
+      if ($payment->status != 'approved') { return $this->errorResult( $id, 'Pago rechazado' ); }
 
       $this->salida['error'] = '';
       $this->salida['result']['success'] = true;
