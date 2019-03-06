@@ -3,15 +3,16 @@ namespace backend\controllers;
 
 use Yii;
 use yii\filters\VerbFilter;
-use common\models\Users;
 
 use backend\controllers\BaseController;
+use common\models\Rol;
+use common\models\Users;
 
-class UserController extends BaseController
+class RolController extends BaseController
 {
   public function actionCreate()
   {
-    $id = 'crear-usuario';
+    $id = 'crear-rol';
     $this->getInputData($id);
 
     //validamos el token
@@ -29,7 +30,7 @@ class UserController extends BaseController
 
   public function actionEdit()
   {
-    $id = 'editar-usuario';
+    $id = 'editar-rol';
     $this->getInputData($id);
 
     //validamos el token
@@ -47,7 +48,7 @@ class UserController extends BaseController
 
   public function actionDelete()
   {
-    $id = 'borrar-usuario';
+    $id = 'borrar-rol';
     $this->getInputData($id);
 
     //validamos el token
@@ -65,7 +66,7 @@ class UserController extends BaseController
 
   public function actionGetAll()
   {
-    $id = 'get-all-usuario';
+    $id = 'get-all-rol';
     $this->getInputData($id);
 
     //validamos el token
@@ -74,7 +75,7 @@ class UserController extends BaseController
     if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
 
     $this->salida['error'] = '';
-    $this->salida['result']['users'] = Users::getAll();
+    $this->salida['result']['roles'] = Rol::getAll();
 
     return $this->successResult($id);
   }

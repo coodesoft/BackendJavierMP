@@ -37,6 +37,14 @@ class BaseController extends Controller
             ],
         ], parent::behaviors());
     }
+    ////////////////////////////////////////////////////////////////////////
+    ///// Métodos comunes para autenticación
+    protected function token_valid(){
+      //validamos el token
+      if (!isset($this->input['headers']['Authorization'])){ return $this->errorResult( $id, 'token not found' ); }
+      $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
+      if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
+    }
 
     ////////////////////////////////////////////////////////////////////////
     ///// Validacion de EMail

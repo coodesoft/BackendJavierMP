@@ -3,7 +3,6 @@ namespace common\models;
 
 use Yii;
 use common\models\UsersInRole;
-use common\models\Usersinorganization;
 use common\models\OrganizationSection;
 use common\models\UsersTokenLog;
 
@@ -22,6 +21,14 @@ class Users extends \yii\db\ActiveRecord
     public function create($data){
 
     }
+
+    public static function getAll(){
+      $all = (new \yii\db\Query())
+                  ->select('id, FirstName, LastName, email')->distinct()->from( self::tableName() )
+                  ->all();
+      return $all;
+    }
+
     // ACTUALIZACION DE CONTRASEÑA
     public function updatePass($p){
       if (!password_verify($p['actual'],$this->password)){
@@ -81,10 +88,20 @@ class Users extends \yii\db\ActiveRecord
       return $documents;
     }
 
+    // INFORMACIÓN DE LA ORGANIZACIÓN
+    public function getOrganizationInfo(){
+      $organizations =  (new \yii\db\Query())
+                  ->select('O.Code, O.Name, O.id')->distinct()->from('Organizations O ')
+                  ->innerJoin('UsersInOrganization UO', 'O.id=UO.OrganizationId')
+                  ->where(['UO.UserId' => $this->id])
+                  ->all();
+      return $documents;
+    }
+
     //INICIO DE SESION
     private function newToken(){
       $this->token_datetime = date('Y-m-d H-i-s');
-      $this->token = password_hash($this->email.$this->token_datetime, PASSWORD_DEFAULT); //'Y3J1enN1aXphOmNydXpzdWl6YQ==';
+      $this->token = password_hash($this->email.$this->token_datetime, PASSWORD_DEFAULT);
 
       $userM = Users::findOne(['token'=>$this->token]);
       if (count($userM)>0){

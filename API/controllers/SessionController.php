@@ -59,19 +59,17 @@ class SessionController extends BaseController
       $this->getInputData('login');
       $userM = Users::findOne(['email'=>$this->input['data']->email]);
 
-      if (count($userM) != 1){ //si el usuario no existe
-        return $this->errorResult( 'login', 'user not found' );
-      }
+      //si el usuario no existe
+      if (count($userM) != 1){ return $this->errorResult( 'login', 'user not found' ); }
 
-      if (!$userM->login($this->input['data']->password)){
-        return $this->errorResult( 'login', 'bad login' );
-      }
+      if (!$userM->login($this->input['data']->password)){ return $this->errorResult( 'login', 'bad login' ); }
 
       $this->salida['result']['success']        = true;
       $this->salida['result']['token']          = 'Bearer '.$userM->token;
       $this->salida['result']['personal_data']  = $userM->getPersonalData();
       $this->salida['result']['UserTypeCode']   = $userM->UserTypeCode;
       $this->salida['result']['functions']      = $userM->getFunctions();
+      $this->salida['result']['organization']   = $userM->getOrganizationInfo();
       $this->salida['result']['documents']      = $userM->getDocumentsAuthorized();
 
       return $this->successResult('login');
