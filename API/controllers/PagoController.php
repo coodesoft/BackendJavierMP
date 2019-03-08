@@ -67,6 +67,7 @@ class PagoController extends BaseController
       if ($payment->status != 'approved') { return $this->errorResult( $id, 'Pago rechazado' ); }
 
       $this->salida['error'] = '';
+      $this->salida['result']['id_pago'] = $this->input['data']->id;
       $this->salida['result']['success'] = true;
 
       return $this->successResult($id);
