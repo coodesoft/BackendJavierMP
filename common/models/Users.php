@@ -2,9 +2,10 @@
 namespace common\models;
 
 use Yii;
-use common\models\UsersInRole;
 use common\models\OrganizationSection;
 use common\models\UsersTokenLog;
+use common\models\Usersinorganization;
+use common\models\UsersInRole;
 
 class Users extends \yii\db\ActiveRecord
 {
@@ -18,15 +19,87 @@ class Users extends \yii\db\ActiveRecord
     }
 
     // CREAR UN NUEVO usuario
-    public function create($data){
+    public function create($d){
+      $usr = new Users();
+      $usr->FirstName = $d->personal_info->FirstName;
+      $usr->LastName  = $d->personal_info->LastName;
+      $usr->email     = $d->personal_info->email;
+      $usr->created   = date('Y-m-d H-i-s');
+      $usr->updated   = date('Y-m-d H-i-s');
 
+      if (!$usr->save(false)) { return false; }
+
+      $uio = new Usersinorganization();
+      $uio->OrganizationId = $d->organization;
+      $uio->UserId         = $usr->id;
+      if (!$uio->save(false)) { return false; }
+
+      for($c=0;$c<count($d->Rol_list);$c++){
+        if($d->Rol_list[$c]->v){
+          $r = new UsersInRole();
+          $r->RoleId = $d->Rol_list[$c]->cod;
+          $r->UserId = $usr->id;
+          $r->save(false);
+        }
+      }
+
+      return $uio->save(false);
     }
 
     public static function getAll(){
       $all = (new \yii\db\Query())
-                  ->select('id, FirstName, LastName, email')->distinct()->from( self::tableName() )
+                  ->select('id, FirstName, LastName, email, disabled_on')->distinct()->from( self::tableName() )
                   ->all();
       return $all;
+    }
+
+    public static function getOneForEdit($id){
+      $salida = ['personal_info' => [], 'organization' => [], 'roles' => [], 'id' => $id];
+
+      $salida['personal_info'] = (new \yii\db\Query())
+                  ->select('FirstName, LastName, email')->distinct()->from( self::tableName() )
+                  ->where(['id' => $id])
+                  ->all()[0];
+
+      $salida['organization'] = self::getOrganization($id);
+
+      $salida['roles'] = self::getRoles($id);
+
+      return $salida;
+    }
+
+    public static function getRoles($id){
+      $all = (new \yii\db\Query())
+                  ->select('R.*')->from( 'UsersInRole UR' )
+                  ->innerJoin('Roles R', 'UR.RoleId=R.id')
+                  ->where(['UserId' => $id])
+                  ->all();
+      return $all;
+    }
+
+    public static function getOrganization($id){
+      $all = (new \yii\db\Query())
+                  ->select('R.*')->from( 'UsersInRole UR' )
+                  ->innerJoin('Roles R', 'UR.RoleId=R.id')
+                  ->where(['UserId' => $id])
+                  ->all();
+      return $all;
+    }
+
+    public static function enable($id){
+      $userM = self::findOne(['id'=>$id]);
+      if (count($userM)==0){ return false;  }
+
+      $userM->disabled_on = NULL;
+      return $userM->save(false);
+    }
+
+    public static function disableUser($id){
+      $userM = self::findOne(['id'=>$id]);
+      if (count($userM)==0){ return false;  }
+
+      $userM->disabled_on = date('Y-m-d H-i-s');
+      return $userM->save(false);
     }
 
     // ACTUALIZACION DE CONTRASEÑA
@@ -168,11 +241,6 @@ class Users extends \yii\db\ActiveRecord
         }
       }
       return false;
-    }
-
-    public function getOrganization(){
-      $salida = [];
-      return $salida;
     }
 
     /**

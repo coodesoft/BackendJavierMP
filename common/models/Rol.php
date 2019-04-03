@@ -23,7 +23,7 @@ class Rol extends \yii\db\ActiveRecord
     // CONSULTA
     public static function getAll(){
       $all = (new \yii\db\Query())
-                  ->select('code, Name, Description')->distinct()->from( self::tableName() )
+                  ->select('code, Name, Description, id')->distinct()->from( self::tableName() )
                   ->all();
       return $all;
     }

@@ -62,6 +62,7 @@ class SessionController extends BaseController
       //si el usuario no existe
       if (count($userM) != 1){ return $this->errorResult( 'login', 'user not found' ); }
 
+      if ($userM->disabled_on != NULL) { return $this->errorResult( 'login', 'user disabled' ); }
       if (!$userM->login($this->input['data']->password)){ return $this->errorResult( 'login', 'bad login' ); }
 
       $this->salida['result']['success']        = true;
