@@ -35,10 +35,8 @@ class UserController extends BaseController
     $userM = Users::findOne(['token'=>explode(' ',$this->input['headers']['Authorization'])[1]]);
     if (count($userM) != 1){ return $this->errorResult( $id, 'user not found' ); }
 
-
-
     $this->salida['error'] = '';
-    $this->salida['result']['success'] = true;
+    $this->salida['result']['success'] = Users::edit($this->input['data']);
 
     return $this->successResult($id);
   }

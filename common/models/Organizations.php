@@ -58,7 +58,7 @@ class Organizations extends \yii\db\ActiveRecord
 
     public static function getAll(){
       $all = (new \yii\db\Query())
-                  ->select('*')->distinct()->from( self::tableName() )
+                  ->select('*')->from( self::tableName() )
                   ->all();
       return $all;
     }

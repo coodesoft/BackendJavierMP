@@ -19,7 +19,7 @@ class Users extends \yii\db\ActiveRecord
     }
 
     // CREAR UN NUEVO usuario
-    public function create($d){
+    public function create($d){ //[Modificar] Hay que aplicar transacciones
       $usr = new Users();
       $usr->FirstName = $d->personal_info->FirstName;
       $usr->LastName  = $d->personal_info->LastName;
@@ -46,9 +46,49 @@ class Users extends \yii\db\ActiveRecord
       return $uio->save(false);
     }
 
+    //editar
+    public function edit($d){ // [Modificar] hay que aplicar transacciones de yii
+      $usr = Users::findOne(['id'=>$d->id]);
+      $usr->FirstName = $d->personal_info->FirstName;
+      $usr->LastName  = $d->personal_info->LastName;
+      $usr->email     = $d->personal_info->email;
+      $usr->created   = date('Y-m-d H-i-s');
+      $usr->updated   = date('Y-m-d H-i-s');
+
+      //se actualiza la contraseña en caso de que se hay especificado una nueva
+      if ($d->Pass != ''){
+        if ($d->Pass != $d->RPass) { return false; }
+        $usr->password = password_hash($d->Pass, PASSWORD_DEFAULT);
+      }
+
+      if (!$usr->save(false)) { return false; }
+
+      Usersinorganization::deleteAll(['UserId' => $d->id]);
+      $uio = new Usersinorganization();
+      $uio->OrganizationId = $d->organization;
+      $uio->UserId         = $usr->id;
+      if (!$uio->save(false)) { return false; }
+
+      //se borran los registros de users inrole
+      UsersInRole::deleteAll(['UserId' => $d->id]);
+      for($c=0;$c<count($d->Rol_list);$c++){
+        if($d->Rol_list[$c]->v){
+          $r = new UsersInRole();
+          $r->RoleId = $d->Rol_list[$c]->cod;
+          $r->UserId = $usr->id;
+          $r->save(false);
+        }
+
+      }
+
+      return true;
+    }
+
     public static function getAll(){
       $all = (new \yii\db\Query())
-                  ->select('id, FirstName, LastName, email, disabled_on')->distinct()->from( self::tableName() )
+                  ->select('U.id, U.FirstName, U.LastName, U.email, U.disabled_on, O.Name AS Organization ')->distinct()->from( self::tableName().' U' )
+                  ->innerJoin('UsersInOrganization UO', 'U.id=UO.UserId')
+                  ->innerJoin('Organizations O', 'UO.OrganizationId=O.id')
                   ->all();
       return $all;
     }
@@ -79,11 +119,11 @@ class Users extends \yii\db\ActiveRecord
 
     public static function getOrganization($id){
       $all = (new \yii\db\Query())
-                  ->select('R.*')->from( 'UsersInRole UR' )
-                  ->innerJoin('Roles R', 'UR.RoleId=R.id')
+                  ->select('UO.*, O.name')->from( 'UsersInOrganization UO' )
+                  ->innerJoin('Organizations O', 'UO.OrganizationId=O.id')
                   ->where(['UserId' => $id])
                   ->all();
-      return $all;
+      return $all[0];
     }
 
     public static function enable($id){
