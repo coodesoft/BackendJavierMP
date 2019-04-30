@@ -121,7 +121,7 @@ class Users extends \yii\db\ActiveRecord
       $all = (new \yii\db\Query())
                   ->select('UO.*, O.name, O.email')->from( 'UsersInOrganization UO' )
                   ->innerJoin('Organizations O', 'UO.OrganizationId=O.id')
-                  ->where(['UserId' => $id])
+                  ->where(['UO.UserId' => $id])
                   ->all();
       return $all[0];
     }
@@ -204,11 +204,11 @@ class Users extends \yii\db\ActiveRecord
     // INFORMACIÓN DE LA ORGANIZACIÓN
     public function getOrganizationInfo(){
       $organizations =  (new \yii\db\Query())
-                  ->select('O.Code, O.Name, O.id')->distinct()->from('Organizations O ')
+                  ->select('O.Code, O.Name, O.id, O.email')->from('Organizations O')
                   ->innerJoin('UsersInOrganization UO', 'O.id=UO.OrganizationId')
                   ->where(['UO.UserId' => $this->id])
                   ->all();
-      return $documents;
+      return $organizations;
     }
 
     //INICIO DE SESION
