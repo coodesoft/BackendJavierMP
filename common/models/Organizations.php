@@ -75,8 +75,9 @@ class Organizations extends \yii\db\ActiveRecord
       $org = Organizations::findOne(['id'=>$d->Id]);
       //if (count($org)>0){ return false;  }
 
-      $org->Code = $d->Code;
-      $org->Name = $d->Name;
+      $org->Code  = $d->Code;
+      $org->Name  = $d->Name;
+      $org->email = $d->Email;
       $org->Updated = date('Y-m-d H-i-s');
       return $org->save(false);
     }
@@ -121,8 +122,9 @@ class Organizations extends \yii\db\ActiveRecord
 
     public static function create($d){
       $org = new Organizations();
-      $org->Code = $d->Code;
-      $org->Name = $d->Name;
+      $org->Code  = $d->Code;
+      $org->Name  = $d->Name;
+      $org->email = $d->Email;
       $org->Created = date('Y-m-d H-i-s');
       $org->Updated = date('Y-m-d H-i-s');
       return $org->save(false);
