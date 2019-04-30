@@ -119,7 +119,7 @@ class Users extends \yii\db\ActiveRecord
 
     public static function getOrganization($id){
       $all = (new \yii\db\Query())
-                  ->select('UO.*, O.name')->from( 'UsersInOrganization UO' )
+                  ->select('UO.*, O.name, O.email')->from( 'UsersInOrganization UO' )
                   ->innerJoin('Organizations O', 'UO.OrganizationId=O.id')
                   ->where(['UserId' => $id])
                   ->all();
