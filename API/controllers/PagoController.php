@@ -58,7 +58,7 @@ class PagoController extends BaseController
       $payment->token              = $this->input['data']->token;
       $payment->description        = $this->input['data']->descripcion;
       $payment->installments       = 1;
-      $payment->payment_method_id  = "visa";
+      $payment->payment_method_id  = $this->input['data']->paymentMethodId;
       $payment->payer = [
         "email" => $this->input['data']->email
       ];
