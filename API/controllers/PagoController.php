@@ -64,6 +64,11 @@ class PagoController extends BaseController
       ];
       $payment->save();
 
+      $pago                = Pago::findOne(['id'=>$this->input['data']->id]);
+      $pago->status        = $payment->status;
+      $pago->preference_id = $payment->id;
+      $pago->save(false);
+
       if ($payment->status != 'approved') { return $this->errorResult( $id, 'Pago rechazado' ); }
 
       $this->salida['error'] = '';
